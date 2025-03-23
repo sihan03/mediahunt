@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Category, categories } from '../../lib/data';
+import { Category, categories } from '../../lib/types';
 import CategoryIcon from './CategoryIcon';
 
 interface CategoryFilterProps {

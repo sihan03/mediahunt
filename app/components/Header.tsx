@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import AuthButton from './AuthButton';
 import { useAuth } from '../../lib/AuthContext';
+import { HiPlusCircle } from 'react-icons/hi';
 
 export default function Header() {
   const { user } = useAuth();
@@ -38,9 +39,10 @@ export default function Header() {
               <>
                 <Link 
                   href="/add" 
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  className="inline-flex items-center gap-2 px-5 py-2 border border-gray-200 text-gray-700 bg-gray-50 hover:bg-gray-100 text-sm font-medium rounded-full shadow-sm transition-colors"
                 >
-                  Submit New Source
+                  <HiPlusCircle className="h-5 w-5" />
+                  Submit
                 </Link>
                 <Link 
                   href="/profile" 
