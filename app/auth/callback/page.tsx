@@ -2,22 +2,32 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { supabase } from '../../../lib/supabase';
 
 export default function AuthCallback() {
   const router = useRouter();
   
   useEffect(() => {
-    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN' && session) {
-        // Redirect to home page after successful sign-in
-        router.push('/');
+    const exchangeCodeForSession = async () => {
+      // Fetch session from our API route
+      try {
+        const response = await fetch('/api/auth');
+        const { session, error } = await response.json();
+        
+        if (error) {
+          console.error('Error getting session:', error);
+          return;
+        }
+        
+        if (session) {
+          // Redirect to home page after successful sign-in
+          router.push('/');
+        }
+      } catch (error) {
+        console.error('Error during auth callback:', error);
       }
-    });
-    
-    return () => {
-      authListener?.subscription.unsubscribe();
     };
+    
+    exchangeCodeForSession();
   }, [router]);
   
   return (

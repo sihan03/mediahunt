@@ -13,6 +13,11 @@ const nextConfig = {
     // !! WARN !!
     ignoreBuildErrors: true,
   },
+  env: {
+    // These will be available at build-time but don't get exposed to browser
+    SUPABASE_URL: process.env.SUPABASE_URL,
+    SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY,
+  },
 };
 
 module.exports = nextConfig; 

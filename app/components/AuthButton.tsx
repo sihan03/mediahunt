@@ -13,17 +13,26 @@ export default function AuthButton() {
 
   const handleSignIn = async () => {
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+      const response = await fetch('/api/auth', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
+        body: JSON.stringify({
+          redirectTo: `${window.location.origin}/auth/callback`,
+        }),
       });
+
+      const data = await response.json();
       
-      if (error) {
-        console.error('Error signing in with Google:', error.message);
+      if (data.error) {
+        console.error('Error signing in with Google:', data.error);
         alert('Error signing in with Google');
+        return;
       }
+      
+      // Redirect to the OAuth URL provided by our API
+      window.location.href = data.url;
     } catch (error) {
       console.error('Error:', error);
     }
