@@ -59,6 +59,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
+    // Skip initialization during build/SSR
+    if (typeof window === 'undefined') {
+      setIsLoading(false);
+      return;
+    }
+
     // Check for existing session
     const initializeAuth = async () => {
       setIsLoading(true);
