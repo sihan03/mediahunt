@@ -18,6 +18,9 @@ const nextConfig = {
     SUPABASE_URL: process.env.SUPABASE_URL,
     SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY,
   },
+  images: {
+    domains: ['lh3.googleusercontent.com'], // Allow Google profile images
+  },
 };
 
 module.exports = nextConfig; 
