@@ -20,13 +20,76 @@ const nextConfig = {
   },
   images: {
     remotePatterns: [
+      // Authentication providers
       {
         protocol: 'https',
-        hostname: 'lh3.googleusercontent.com',
+        hostname: 'lh3.googleusercontent.com', // Google profile images
       },
+      
+      // Tech news/media sources
       {
         protocol: 'https',
         hostname: 'www.technologyreview.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'tldr.tech',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.medium.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'techcrunch.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.techcrunch.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'cdn.substack.com', // For newsletter thumbnails
+      },
+      {
+        protocol: 'https',
+        hostname: '**.substack.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'i.ytimg.com', // YouTube thumbnails
+      },
+      {
+        protocol: 'https',
+        hostname: 'yt3.ggpht.com', // YouTube channel icons
+      },
+      {
+        protocol: 'https',
+        hostname: 'yt3.googleusercontent.com', // YouTube channel icons (newer)
+      },
+      {
+        protocol: 'https',
+        hostname: 'pbs.twimg.com', // Twitter images
+      },
+      {
+        protocol: 'https',
+        hostname: 'abs.twimg.com', // Twitter avatars
+      },
+      {
+        protocol: 'https',
+        hostname: 'avatars.githubusercontent.com', // GitHub avatars
+      },
+      {
+        protocol: 'https',
+        hostname: 'openai.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'cdn.openai.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'static.wixstatic.com',
       }
     ],
   },

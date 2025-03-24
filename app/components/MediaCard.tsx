@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { MediaSource } from '../../lib/types';
 import CategoryIcon from './CategoryIcon';
-import Image from 'next/image';
+import SafeImage from './SafeImage';
 
 interface MediaCardProps {
   mediaSource: MediaSource;
@@ -12,31 +12,23 @@ interface MediaCardProps {
 
 export default function MediaCard({ mediaSource, onVote }: MediaCardProps) {
   const { id, title, url, description, imageUrl, category, votes, userVote } = mediaSource;
-  const [imageError, setImageError] = useState(false);
 
   // Create placeholder URL based on category
   const placeholderImage = `/placeholder-${category}.svg`;
-  const defaultPlaceholder = '/placeholder-default.svg';
   
   return (
     <div className="bg-white overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow duration-200">
       <div className="flex p-4">
         <div className="mr-4 flex-shrink-0">
           <div className="h-16 w-16 relative rounded-md overflow-hidden border border-gray-200 shadow-sm">
-            <Image
-              src={imageError ? placeholderImage : imageUrl}
+            <SafeImage
+              src={imageUrl}
               alt={title}
               className="object-cover h-full w-full"
               width={64}
               height={64}
-              onError={(e) => {
-                // If the placeholder also fails, use the default placeholder
-                if (imageError) {
-                  e.currentTarget.src = defaultPlaceholder;
-                } else {
-                  setImageError(true);
-                }
-              }}
+              fallbackSrc={placeholderImage}
+              unoptimized={true} // Skip image optimization for external images
             />
           </div>
         </div>

@@ -6,6 +6,7 @@ import { useAuth } from '../../lib/AuthContext';
 import { Fragment } from 'react';
 import { Menu, Transition } from '@headlessui/react';
 import Image from 'next/image';
+import SafeImage from './SafeImage';
 
 export default function AuthButton() {
   const [showModal, setShowModal] = useState(false);
@@ -49,12 +50,14 @@ export default function AuthButton() {
         <div>
           <Menu.Button className="flex items-center justify-center w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
             {user.user_metadata?.avatar_url ? (
-              <Image 
+              <SafeImage 
                 src={user.user_metadata.avatar_url} 
                 alt={user.user_metadata?.full_name || 'User'} 
                 className="w-full h-full rounded-full object-cover"
                 width={40}
                 height={40}
+                unoptimized={true}
+                fallbackSrc="/default-avatar.svg"
               />
             ) : (
               <div className="flex items-center justify-center w-full h-full text-lg font-medium">
