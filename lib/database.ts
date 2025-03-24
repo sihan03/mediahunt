@@ -38,17 +38,24 @@ export type MediaItem = {
 
 // Fetch all media items
 export async function fetchAllMedia(): Promise<MediaItem[]> {
-  const { data, error } = await supabase
-    .from('media')
-    .select('*')
-    .order('votes', { ascending: false });
+  console.log('Executing fetchAllMedia');
+  try {
+    const { data, error } = await supabase
+      .from('media')
+      .select('*')
+      .order('votes', { ascending: false });
+      
+    if (error) {
+      console.error('Error fetching media:', error);
+      throw error;
+    }
     
-  if (error) {
-    console.error('Error fetching media:', error);
-    throw error;
+    console.log('fetchAllMedia results:', data ? `${data.length} items` : 'no data');
+    return data || [];
+  } catch (err) {
+    console.error('Exception in fetchAllMedia:', err);
+    return []; // Return empty array instead of throwing to avoid breaking the UI
   }
-  
-  return data || [];
 }
 
 // Fetch media with user's vote status

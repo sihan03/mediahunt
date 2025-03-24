@@ -5,7 +5,7 @@ import { supabaseServer } from '../../../lib/supabase-server';
 export async function GET(request: NextRequest) {
   try {
     const { data, error } = await supabaseServer
-      .from('media_items')
+      .from('media')
       .select('*')
       .order('created_at', { ascending: false });
     
@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
     mediaData.user_id = userId;
     
     const { data, error } = await supabaseServer
-      .from('media_items')
+      .from('media')
       .insert(mediaData)
       .select()
       .single();

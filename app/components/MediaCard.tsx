@@ -13,8 +13,8 @@ interface MediaCardProps {
 export default function MediaCard({ mediaSource, onVote }: MediaCardProps) {
   const { id, title, url, description, imageUrl, category, votes, userVote } = mediaSource;
 
-  // Create placeholder URL based on category
-  const placeholderImage = `/placeholder-${category}.svg`;
+  // Create placeholder URL based on category or use default if category doesn't match
+  const placeholderImage = `/placeholder-${category || 'default'}.svg`;
   
   return (
     <div className="bg-white overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow duration-200">
