@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { MediaSource } from '../../lib/data';
+import { MediaSource } from '../../lib/types';
 import CategoryIcon from './CategoryIcon';
+import Image from 'next/image';
 
 interface MediaCardProps {
   mediaSource: MediaSource;
@@ -22,10 +23,12 @@ export default function MediaCard({ mediaSource, onVote }: MediaCardProps) {
       <div className="flex p-4">
         <div className="mr-4 flex-shrink-0">
           <div className="h-16 w-16 relative rounded-md overflow-hidden border border-gray-200 shadow-sm">
-            <img
+            <Image
               src={imageError ? placeholderImage : imageUrl}
               alt={title}
               className="object-cover h-full w-full"
+              width={64}
+              height={64}
               onError={(e) => {
                 // If the placeholder also fails, use the default placeholder
                 if (imageError) {

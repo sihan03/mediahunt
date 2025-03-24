@@ -45,9 +45,9 @@ export default function ProfileEditor() {
       
       await refreshUserProfile();
       setSuccess(true);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error updating profile:', err);
-      setError(err.message || 'Failed to update profile');
+      setError(err instanceof Error ? err.message : 'Failed to update profile');
     } finally {
       setIsLoading(false);
     }
@@ -83,7 +83,7 @@ export default function ProfileEditor() {
             required
           />
           <p className="mt-1 text-sm text-gray-500">
-            This appears in your profile URL and can't be changed once set.
+            This appears in your profile URL and can&apos;t be changed once set.
           </p>
         </div>
         

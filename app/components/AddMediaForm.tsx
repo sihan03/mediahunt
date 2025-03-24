@@ -40,9 +40,9 @@ export default function AddMediaForm() {
       
       // Redirect to home page after successful submission
       router.push('/');
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error adding media:', err);
-      setError(err.message || 'Failed to add media item');
+      setError(err instanceof Error ? err.message : 'Failed to add media item');
       setIsLoading(false);
     }
   };
