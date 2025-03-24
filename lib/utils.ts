@@ -1,4 +1,4 @@
-import { MediaSource, Category } from './data';
+import { MediaSource, Category } from './types';
 
 // Filter media sources by category
 export function filterMediaSources(sources: MediaSource[], category: Category): MediaSource[] {
