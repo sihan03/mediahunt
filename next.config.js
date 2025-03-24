@@ -19,7 +19,16 @@ const nextConfig = {
     SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY,
   },
   images: {
-    domains: ['lh3.googleusercontent.com'], // Allow Google profile images
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.technologyreview.com',
+      }
+    ],
   },
 };
 
