@@ -13,48 +13,63 @@ interface MediaCardProps {
 export default function MediaCard({ mediaSource, onVote }: MediaCardProps) {
   const { id, title, url, description, imageUrl, category, votes, userVote } = mediaSource;
 
-  // Create placeholder URL based on category
-  const placeholderImage = `/placeholder-${category}.svg`;
-  
   return (
-    <div className="bg-white overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow duration-200">
-      <div className="flex p-4">
-        <div className="mr-4 flex-shrink-0">
-          <div className="h-16 w-16 relative rounded-md overflow-hidden border border-gray-200 shadow-sm">
-            <SafeImage
-              src={imageUrl || ''}  // Ensure we never pass undefined or null
-              alt={title}
-              className="object-cover h-full w-full"
-              width={64}
-              height={64}
-              fallbackSrc={placeholderImage}
-              unoptimized={true} // Skip image optimization for external images
-            />
+    <div className="apple-card hover:translate-y-[-2px] overflow-hidden">
+      <div className="flex items-start p-5">
+        <div className="flex-shrink-0 mr-5">
+          <div className="bg-gray-100 rounded-lg h-20 w-20 overflow-hidden flex items-center justify-center">
+            {imageUrl ? (
+              <SafeImage
+                src={imageUrl}
+                alt={title}
+                height={80}
+                width={80}
+                className="object-cover"
+              />
+            ) : (
+              <CategoryIcon category={category} className="h-8 w-8 text-gray-400" />
+            )}
           </div>
         </div>
+        
         <div className="flex-1 min-w-0">
           <a 
-            href={url} 
-            target="_blank" 
+            href={url}
+            target="_blank"
             rel="noopener noreferrer"
-            className="text-lg font-medium text-indigo-600 hover:text-indigo-500 hover:underline"
+            className="block group"
           >
-            {title}
+            <h3 className="text-lg font-medium text-gray-900 tracking-tight truncate group-hover:text-blue-500 transition-colors">
+              {title}
+            </h3>
           </a>
-          <p className="mt-1 text-gray-500 text-sm">{description}</p>
-          <div className="mt-2 flex items-center">
+          
+          <div className="flex items-center mt-1 text-sm text-gray-500">
             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
               <CategoryIcon category={category} className="h-3 w-3 mr-1" />
               {category.charAt(0).toUpperCase() + category.slice(1)}
             </span>
+            <a 
+              href={url} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="ml-2 truncate hover:text-blue-500 transition-colors"
+            >
+              {new URL(url).hostname}
+            </a>
           </div>
+          
+          <p className="mt-2 text-sm text-gray-600 line-clamp-2">
+            {description}
+          </p>
         </div>
-        <div className="flex flex-col items-center justify-center ml-4">
+
+        <div className="flex flex-col items-center justify-center ml-5">
           <button 
             onClick={() => onVote(id, 'up')}
-            className={`flex items-center justify-center h-7 w-7 rounded-md p-1 ${
+            className={`flex items-center justify-center h-8 w-8 rounded-full p-1 transition-all duration-200 ${
               userVote === 'up' 
-                ? 'text-white bg-green-500' 
+                ? 'text-white bg-gradient-to-r from-green-500 to-green-400 shadow-sm' 
                 : 'text-gray-400 hover:text-gray-500 hover:bg-gray-100'
             }`}
             aria-label="Upvote"
@@ -66,9 +81,9 @@ export default function MediaCard({ mediaSource, onVote }: MediaCardProps) {
           <span className="text-sm font-medium text-gray-900 my-1">{votes}</span>
           <button 
             onClick={() => onVote(id, 'down')}
-            className={`flex items-center justify-center h-7 w-7 rounded-md p-1 ${
+            className={`flex items-center justify-center h-8 w-8 rounded-full p-1 transition-all duration-200 ${
               userVote === 'down' 
-                ? 'text-white bg-red-500' 
+                ? 'text-white bg-gradient-to-r from-red-500 to-red-400 shadow-sm' 
                 : 'text-gray-400 hover:text-gray-500 hover:bg-gray-100'
             }`}
             aria-label="Downvote"

@@ -18,8 +18,8 @@ export default function AddMediaForm() {
 
   if (!user) {
     return (
-      <div className="p-6 bg-white rounded-lg shadow">
-        <p className="text-gray-700">You must be signed in to add media sources.</p>
+      <div className="p-8 bg-white rounded-xl shadow-sm">
+        <p className="text-gray-700 text-center">You must be signed in to add media sources.</p>
       </div>
     );
   }
@@ -48,18 +48,17 @@ export default function AddMediaForm() {
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow">
-      <h2 className="text-2xl font-bold mb-6">Add New Media Source</h2>
+    <div className="bg-white p-8 rounded-xl shadow-sm" role="form" aria-label="add media">
       
       {error && (
-        <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">
+        <div className="mb-6 p-4 bg-red-50 text-red-700 rounded-lg border border-red-100 animate-appear">
           {error}
         </div>
       )}
       
       <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label className="block text-gray-700 mb-2" htmlFor="title">
+        <div className="mb-6">
+          <label className="block text-gray-700 text-sm font-medium mb-2" htmlFor="title">
             Title *
           </label>
           <input
@@ -67,13 +66,13 @@ export default function AddMediaForm() {
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full p-2 border rounded"
+            className="w-full p-3 border border-[#d2d2d7] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
             required
           />
         </div>
         
-        <div className="mb-4">
-          <label className="block text-gray-700 mb-2" htmlFor="url">
+        <div className="mb-6">
+          <label className="block text-gray-700 text-sm font-medium mb-2" htmlFor="url">
             URL *
           </label>
           <input
@@ -81,35 +80,35 @@ export default function AddMediaForm() {
             type="url"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
-            className="w-full p-2 border rounded"
+            className="w-full p-3 border border-[#d2d2d7] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
             placeholder="https://"
             required
           />
         </div>
         
-        <div className="mb-4">
-          <label className="block text-gray-700 mb-2" htmlFor="description">
+        <div className="mb-6">
+          <label className="block text-gray-700 text-sm font-medium mb-2" htmlFor="description">
             Description *
           </label>
           <textarea
             id="description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full p-2 border rounded"
+            className="w-full p-3 border border-[#d2d2d7] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
             rows={4}
             required
           />
         </div>
         
-        <div className="mb-4">
-          <label className="block text-gray-700 mb-2" htmlFor="category">
+        <div className="mb-6">
+          <label className="block text-gray-700 text-sm font-medium mb-2" htmlFor="category">
             Category *
           </label>
           <select
             id="category"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="w-full p-2 border rounded"
+            className="w-full p-3 border border-[#d2d2d7] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white"
             required
           >
             <option value="">Select a category</option>
@@ -123,8 +122,8 @@ export default function AddMediaForm() {
           </select>
         </div>
         
-        <div className="mb-4">
-          <label className="block text-gray-700 mb-2" htmlFor="imageUrl">
+        <div className="mb-8">
+          <label className="block text-gray-700 text-sm font-medium mb-2" htmlFor="imageUrl">
             Image URL (optional)
           </label>
           <input
@@ -132,7 +131,7 @@ export default function AddMediaForm() {
             type="url"
             value={imageUrl}
             onChange={(e) => setImageUrl(e.target.value)}
-            className="w-full p-2 border rounded"
+            className="w-full p-3 border border-[#d2d2d7] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
             placeholder="https://"
           />
         </div>
@@ -140,7 +139,7 @@ export default function AddMediaForm() {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full bg-indigo-600 text-white p-2 rounded hover:bg-indigo-700 disabled:bg-indigo-300"
+          className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white p-3 rounded-lg hover:shadow-md hover:scale-[1.01] transition-all duration-200 font-medium disabled:opacity-75"
         >
           {isLoading ? 'Adding...' : 'Add Media Source'}
         </button>
