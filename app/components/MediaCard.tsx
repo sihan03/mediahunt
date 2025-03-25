@@ -22,7 +22,7 @@ export default function MediaCard({ mediaSource, onVote }: MediaCardProps) {
         <div className="mr-4 flex-shrink-0">
           <div className="h-16 w-16 relative rounded-md overflow-hidden border border-gray-200 shadow-sm">
             <SafeImage
-              src={imageUrl}
+              src={imageUrl || ''}  // Ensure we never pass undefined or null
               alt={title}
               className="object-cover h-full w-full"
               width={64}

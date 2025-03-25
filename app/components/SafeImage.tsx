@@ -17,8 +17,9 @@ export default function SafeImage({
   fallbackSrc = '/placeholder-default.svg',
   ...props 
 }: SafeImageProps) {
-  const [imgSrc, setImgSrc] = useState(src);
-  const [hasError, setHasError] = useState(false);
+  // Use fallback immediately if src is empty, undefined or null
+  const [imgSrc, setImgSrc] = useState(src && src !== '' ? src : fallbackSrc);
+  const [hasError, setHasError] = useState(!src || src === '');
 
   const handleError = () => {
     if (!hasError) {

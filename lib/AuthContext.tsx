@@ -67,41 +67,59 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
 
+    let isMounted = true;
+    
     // Check for existing session
     const initializeAuth = async () => {
-      setIsLoading(true);
+      // Only show loading if we don't already have a user
+      if (!user && isMounted) {
+        setIsLoading(true);
+      }
       
       try {
         const { data } = await supabase.auth.getSession();
-        setSession(data.session);
-        setUser(data.session?.user || null);
         
-        if (data.session?.user) {
-          await fetchUserProfile(data.session.user.id);
+        // Only update state if component is still mounted and user has changed
+        // This prevents unnecessary updates on tab focus
+        if (isMounted && JSON.stringify(data.session?.user) !== JSON.stringify(user)) {
+          setSession(data.session);
+          setUser(data.session?.user || null);
+          
+          if (data.session?.user) {
+            await fetchUserProfile(data.session.user.id);
+          }
         }
       } catch (error) {
         console.error('Error loading session:', error);
       } finally {
-        setIsLoading(false);
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
       
       // Set up the auth state listener
       const { data: { subscription } } = supabase.auth.onAuthStateChange(
         async (event, session) => {
-          setSession(session);
-          setUser(session?.user || null);
-          
-          if (session?.user) {
-            await fetchUserProfile(session.user.id);
-          } else {
-            setUserProfile(null);
+          // Only process meaningful auth events, not just tab focus
+          if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'USER_UPDATED') {
+            if (isMounted) {
+              setSession(session);
+              setUser(session?.user || null);
+              
+              if (session?.user) {
+                await fetchUserProfile(session.user.id);
+              } else {
+                setUserProfile(null);
+              }
+              
+              setIsLoading(false);
+            }
           }
-          
-          setIsLoading(false);
         }
       );
       
       return () => {
+        isMounted = false;
         subscription?.unsubscribe();
       };
     };

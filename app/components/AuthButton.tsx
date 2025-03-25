@@ -51,7 +51,7 @@ export default function AuthButton() {
           <Menu.Button className="flex items-center justify-center w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
             {user.user_metadata?.avatar_url ? (
               <SafeImage 
-                src={user.user_metadata.avatar_url} 
+                src={user.user_metadata.avatar_url || ''} 
                 alt={user.user_metadata?.full_name || 'User'} 
                 className="w-full h-full rounded-full object-cover"
                 width={40}

@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import type { Database } from './supabase-types';
 
 // Check if we're running on the server during build time
 const isBuildTime = typeof window === 'undefined';
@@ -42,7 +43,7 @@ const createSupabaseClient = () => {
   
   // Only create the real client if we have the credentials
   if (supabaseUrl && supabaseAnonKey) {
-    return createClient(supabaseUrl, supabaseAnonKey);
+    return createClient<Database>(supabaseUrl, supabaseAnonKey);
   }
   
   // Fallback mock client for client-side if no credentials
