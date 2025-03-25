@@ -3,8 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "npm install --legacy-peer-deps && next build",
+    "prebuild": "npx @tailwindcss/cli -i ./app/globals.css -o ./app/tailwind-output.css",
+    "dev": "npx @tailwindcss/cli -i ./app/globals.css -o ./app/tailwind-output.css --watch & next dev --turbopack",
+    "build": "npm install --legacy-peer-deps && npm run prebuild && next build",
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
@@ -25,6 +26,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@tailwindcss/cli": "^4.0.16",
     "@tailwindcss/postcss": "^4.0.16",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.0.0",
