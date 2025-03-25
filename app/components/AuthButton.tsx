@@ -1,16 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../lib/AuthContext';
 import { Fragment } from 'react';
 import { Menu, Transition } from '@headlessui/react';
-import Image from 'next/image';
 import SafeImage from './SafeImage';
+import SignOutButton from './SignOutButton';
 
 export default function AuthButton() {
   const [showModal, setShowModal] = useState(false);
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
 
   const handleSignIn = async () => {
     try {
@@ -38,20 +37,24 @@ export default function AuthButton() {
       console.error('Error:', error);
     }
   };
-  
-  const handleSignOut = async () => {
-    await signOut();
-  };
 
   // If user is signed in, show user avatar and dropdown
   if (user) {
+    console.log('User metadata:', user.user_metadata);
+    console.log('Avatar URL:', user.user_metadata?.avatar_url);
+    
     return (
       <Menu as="div" className="relative inline-block text-left mr-3">
         <div>
           <Menu.Button className="flex items-center justify-center w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
             {user.user_metadata?.avatar_url ? (
               <SafeImage 
-                src={user.user_metadata.avatar_url || ''} 
+                src={
+                  // For Google images, use proxy endpoint directly to avoid CORS issues
+                  user.user_metadata.avatar_url.includes('googleusercontent.com') 
+                    ? `/api/proxy-image?url=${encodeURIComponent(user.user_metadata.avatar_url)}`
+                    : user.user_metadata.avatar_url
+                }
                 alt={user.user_metadata?.full_name || 'User'} 
                 className="w-full h-full rounded-full object-cover"
                 width={40}
@@ -86,14 +89,9 @@ export default function AuthButton() {
               <hr />
               <Menu.Item>
                 {({ active }: { active: boolean }) => (
-                  <button
-                    onClick={handleSignOut}
-                    className={`${
-                      active ? 'bg-gray-100 text-gray-900' : 'text-gray-700'
-                    } block w-full px-4 py-2 text-left text-sm`}
-                  >
-                    Sign out
-                  </button>
+                  <SignOutButton
+                    className={active ? 'bg-gray-100 text-gray-900' : 'text-gray-700'}
+                  />
                 )}
               </Menu.Item>
             </div>

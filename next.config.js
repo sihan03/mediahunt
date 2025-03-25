@@ -25,6 +25,14 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'lh3.googleusercontent.com', // Google profile images
       },
+      {
+        protocol: 'https', 
+        hostname: '**.googleusercontent.com', // Catch all Google user content
+      },
+      {
+        protocol: 'https',
+        hostname: 'storage.googleapis.com', // Google Storage for some avatars
+      },
       
       // Tech news/media sources
       {

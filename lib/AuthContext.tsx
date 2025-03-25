@@ -129,6 +129,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   
   const signOut = async () => {
     try {
+      // First, sign out on the client side to immediately clear local storage/cookies
+      await supabase.auth.signOut();
+      
+      // Then call the server API to clear server-side session
       const response = await fetch('/api/auth/signout', {
         method: 'POST',
       });
@@ -140,10 +144,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return;
       }
       
+      // Clear state
       setUser(null);
       setSession(null);
       setUserProfile(null);
-      router.push('/');
+      
+      // Force a refresh of the page to ensure all state is cleared
+      window.location.href = '/';
     } catch (error) {
       console.error('Error signing out:', error);
     }
