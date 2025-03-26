@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '../../../lib/supabase';
 
-export default function AuthCallback() {
+// Separate client component that uses useSearchParams
+function AuthCallbackClient() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const searchParams = useSearchParams();
@@ -85,5 +86,25 @@ export default function AuthCallback() {
         )}
       </div>
     </div>
+  );
+}
+
+// Main component with Suspense boundary
+export default function AuthCallback() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="p-8 bg-white rounded-lg shadow-md">
+          <div className="flex justify-center mb-4">
+            <div className="w-16 h-16 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+          <h2 className="text-2xl font-bold text-center text-gray-900">
+            Loading...
+          </h2>
+        </div>
+      </div>
+    }>
+      <AuthCallbackClient />
+    </Suspense>
   );
 } 
