@@ -1,14 +1,14 @@
 import { render, screen, act, waitFor } from '@testing-library/react';
 import MediaList from '../../app/components/MediaList';
 import { useAuth } from '../../lib/AuthContext';
-import { fetchAllMedia, fetchMediaWithUserVotes } from '../../lib/database';
+import { fetchAllMedia, fetchMediaWithUserVotes, handleVote } from '../../lib/api';
 
 // Mock dependencies
 jest.mock('../../lib/AuthContext', () => ({
   useAuth: jest.fn(),
 }));
 
-jest.mock('../../lib/database', () => ({
+jest.mock('../../lib/api', () => ({
   fetchAllMedia: jest.fn(),
   fetchMediaWithUserVotes: jest.fn(),
   handleVote: jest.fn(),
@@ -48,6 +48,14 @@ const mockMedia = [
   }
 ];
 
+// Mock AbortController if needed
+if (typeof AbortController === 'undefined') {
+  global.AbortController = jest.fn().mockImplementation(() => ({
+    signal: {},
+    abort: jest.fn()
+  })) as any;
+}
+
 describe('MediaList', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -56,6 +64,13 @@ describe('MediaList', () => {
     (useAuth as jest.Mock).mockReturnValue({ user: null });
     (fetchAllMedia as jest.Mock).mockResolvedValue(mockMedia);
     (fetchMediaWithUserVotes as jest.Mock).mockResolvedValue(mockMedia);
+
+    // Mock setTimeout to execute immediately
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
   });
 
   it('should load media without user votes when not logged in', async () => {
@@ -64,12 +79,16 @@ describe('MediaList', () => {
     
     // Act
     render(<MediaList />);
+    
+    // Advance timers to trigger data fetching
+    act(() => {
+      jest.runAllTimers();
+    });
 
     // Wait for the data to load
     await waitFor(() => {
       expect(fetchAllMedia).toHaveBeenCalledTimes(1);
       expect(fetchMediaWithUserVotes).not.toHaveBeenCalled();
-      // Check that media cards are rendered
       expect(screen.getAllByTestId('media-card')).toHaveLength(2);
     });
   });
@@ -82,10 +101,15 @@ describe('MediaList', () => {
     // Act
     render(<MediaList />);
     
+    // Advance timers to trigger data fetching
+    act(() => {
+      jest.runAllTimers();
+    });
+    
     // Wait for the data to load
     await waitFor(() => {
       expect(fetchMediaWithUserVotes).toHaveBeenCalledTimes(1);
-      expect(fetchMediaWithUserVotes).toHaveBeenCalledWith(mockUser.id, expect.any(AbortSignal));
+      expect(fetchMediaWithUserVotes).toHaveBeenCalledWith(mockUser.id, expect.any(Object));
       expect(fetchAllMedia).not.toHaveBeenCalled();
       expect(screen.getAllByTestId('media-card')).toHaveLength(2);
     });

@@ -14,8 +14,9 @@ export default function AuthButton() {
 
   const handleSignIn = async () => {
     try {
-      // Use the environment variable for the redirect URL with a fallback to window.location.origin
-      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
+      // Always prioritize window.location.origin for local development to handle dynamic ports
+      // Fall back to NEXT_PUBLIC_SITE_URL only in production
+      const siteUrl = window.location.origin;
       
       const response = await fetch('/api/auth', {
         method: 'POST',

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../lib/AuthContext';
-import { fetchAllMedia, fetchMediaWithUserVotes, handleVote } from '../../lib/database';
+import { fetchAllMedia, fetchMediaWithUserVotes, handleVote } from '../../lib/api';
 import MediaCard from './MediaCard';
 import { MediaSource, Category } from '../../lib/types';
 import CategoryFilter from './CategoryFilter';
@@ -29,25 +29,14 @@ export default function MediaList() {
     async function loadMedia() {
       try {
         if (user) {
-          // Fetch media with user vote status using AbortSignal
+          // Fetch media with user vote status using API
           const media = await fetchMediaWithUserVotes(user.id, signal);
           // Only update state if component is still mounted
           if (isMounted) setMediaItems(media);
         } else {
-          // Fetch media without user vote status using AbortSignal
+          // Fetch media without user vote status using API
           const media = await fetchAllMedia(signal);
-          if (isMounted) {
-            setMediaItems(media.map(item => ({
-              id: item.id,
-              title: item.title,
-              url: item.url,
-              description: item.description,
-              category: item.category,
-              imageUrl: item.image_url || '',
-              votes: item.votes,
-              userVote: null
-            })));
-          }
+          if (isMounted) setMediaItems(media);
         }
       } catch (err: any) {
         // Ignore AbortError as it's expected during cleanup

@@ -2,8 +2,9 @@
 
 import { useState } from 'react';
 import { useAuth } from '../../lib/AuthContext';
-import { addMediaItem } from '../../lib/database';
+import { addMediaItem } from '../../lib/api';
 import { useRouter } from 'next/navigation';
+import { Category } from '../../lib/types';
 
 export default function AddMediaForm() {
   const { user } = useAuth();
@@ -11,7 +12,7 @@ export default function AddMediaForm() {
   const [title, setTitle] = useState('');
   const [url, setUrl] = useState('');
   const [description, setDescription] = useState('');
-  const [category, setCategory] = useState('');
+  const [category, setCategory] = useState<Category>('');
   const [imageUrl, setImageUrl] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -107,7 +108,7 @@ export default function AddMediaForm() {
           <select
             id="category"
             value={category}
-            onChange={(e) => setCategory(e.target.value)}
+            onChange={(e) => setCategory(e.target.value as Category)}
             className="w-full p-3 border border-[#d2d2d7] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white"
             required
           >

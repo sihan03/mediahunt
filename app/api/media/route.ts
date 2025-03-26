@@ -1,19 +1,77 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseServer } from '../../../lib/supabase-server';
 
-// Get all media items
+// Get all media items or media with user votes if userId is provided
 export async function GET(request: NextRequest) {
   try {
-    const { data, error } = await supabaseServer
-      .from('media')
-      .select('*')
-      .order('created_at', { ascending: false });
-    
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
+    // Check for userId query parameter
+    const userId = request.nextUrl.searchParams.get('userId');
+
+    if (userId) {
+      // First get all media
+      const { data: mediaData, error: mediaError } = await supabaseServer
+        .from('media')
+        .select('*')
+        .order('votes', { ascending: false });
+        
+      if (mediaError) {
+        return NextResponse.json({ error: mediaError.message }, { status: 400 });
+      }
+      
+      // Then get the user's votes
+      const { data: voteData, error: voteError } = await supabaseServer
+        .from('user_votes')
+        .select('*')
+        .eq('user_id', userId);
+        
+      if (voteError) {
+        return NextResponse.json({ error: voteError.message }, { status: 400 });
+      }
+      
+      // Map votes to media items
+      const userVotesMap = new Map();
+      voteData?.forEach((vote) => {
+        userVotesMap.set(vote.media_id, vote.vote_type);
+      });
+      
+      // Combine data
+      const mediaWithVotes = mediaData.map(media => ({
+        id: media.id,
+        title: media.title,
+        url: media.url,
+        description: media.description,
+        category: media.category,
+        imageUrl: media.image_url || '',
+        votes: media.votes,
+        userVote: userVotesMap.get(media.id) || null
+      }));
+      
+      return NextResponse.json({ media: mediaWithVotes });
+    } else {
+      // Just get all media
+      const { data, error } = await supabaseServer
+        .from('media')
+        .select('*')
+        .order('votes', { ascending: false });
+      
+      if (error) {
+        return NextResponse.json({ error: error.message }, { status: 400 });
+      }
+      
+      // Transform to match frontend expectations
+      const formattedMedia = data.map(media => ({
+        id: media.id,
+        title: media.title,
+        url: media.url,
+        description: media.description,
+        category: media.category,
+        imageUrl: media.image_url || '',
+        votes: media.votes,
+        userVote: null
+      }));
+      
+      return NextResponse.json({ media: formattedMedia });
     }
-    
-    return NextResponse.json({ media: data });
   } catch (error) {
     console.error('Media fetch error:', error);
     return NextResponse.json(

@@ -11,6 +11,6 @@ export interface MediaSource {
   userVote?: 'up' | 'down' | null;
 }
 
-export type Category = 'all' | 'newsletter' | 'publication' | 'youtube' | 'podcast';
+export type Category = 'all' | 'news' | 'tutorial' | 'course' | 'podcast' | 'video' | 'blog' | 'other' | '';
 
-export const categories: Category[] = ['all', 'newsletter', 'publication', 'youtube', 'podcast']; 
+export const categories: Category[] = ['all', 'news', 'tutorial', 'course', 'podcast', 'video', 'blog', 'other']; 

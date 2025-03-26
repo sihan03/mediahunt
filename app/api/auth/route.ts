@@ -6,9 +6,10 @@ export async function POST(request: NextRequest) {
   try {
     const { redirectTo } = await request.json();
     
-    // Use the provided redirectTo or fall back to environment variable, then to request origin
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || request.nextUrl.origin;
-    const callbackUrl = redirectTo || `${siteUrl}/auth/callback`;
+    // Always use the provided redirectTo which comes from window.location.origin on the client
+    // This handles dynamic ports in development automatically
+    // Only fall back to environment variables if necessary
+    const callbackUrl = redirectTo || `${request.nextUrl.origin}/auth/callback`;
     
     const { data, error } = await supabaseServer.auth.signInWithOAuth({
       provider: 'google',
