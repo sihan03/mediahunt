@@ -14,13 +14,16 @@ export default function AuthButton() {
 
   const handleSignIn = async () => {
     try {
+      // Use the environment variable for the redirect URL with a fallback to window.location.origin
+      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
+      
       const response = await fetch('/api/auth', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: `${siteUrl}/auth/callback`,
         }),
       });
 
