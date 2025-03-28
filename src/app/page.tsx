@@ -1,103 +1,155 @@
-import Image from "next/image";
+'use client';
+
+import React from 'react';
+import Image from 'next/image';
+import { useMediaData } from '@/hooks/useMediaData';
+import { getEmojiForType } from '@/hooks/useMediaIcon';
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const { 
+    mediaItems, 
+    isLoading, 
+    error, 
+    incrementVotes, 
+    addComment 
+  } = useMediaData();
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="text-red-500">{error}</div>
+      </div>
+    );
+  }
+
+  return (
+    <main className="min-h-screen bg-gray-50">
+      {/* Main content */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="space-y-4">
+          {mediaItems.map((item) => (
+            <div
+              key={item.id}
+              className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200"
+            >
+              <div className="flex items-start space-x-4">
+                {/* Content */}
+                <div className="flex-1">
+                  <div className="flex items-center space-x-4">
+                    {item.icon ? (
+                      item.icon.startsWith('/') ? (
+                        // Render image if path exists and starts with '/'
+                        <Image
+                          src={item.icon}
+                          alt={`${item.title} icon`}
+                          width={48}
+                          height={48}
+                          className="rounded-lg"
+                        />
+                      ) : (
+                        // Render provided emoji directly
+                        <span 
+                          className="text-4xl w-12 h-12 flex items-center justify-center bg-gray-100 rounded-lg" 
+                          role="img" 
+                          aria-label={`${item.title} icon`}
+                        >
+                          {item.icon}
+                        </span>
+                      )
+                    ) : (
+                      // Fallback to type-based emoji if no icon provided
+                      <span 
+                        className="text-4xl w-12 h-12 flex items-center justify-center bg-gray-100 rounded-lg" 
+                        role="img" 
+                        aria-label={`${item.type} icon`}
+                      >
+                        {getEmojiForType(item.type)}
+                      </span>
+                    )}
+                    <div>
+                      <h2 className="text-lg font-medium text-gray-900">{item.title}</h2>
+                      <p className="text-sm text-gray-500">{item.description}</p>
+                      <div className="mt-2 flex items-center space-x-4">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                          {item.type}
+                        </span>
+                        <a
+                          href={`https://${item.url}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sm text-gray-500 hover:text-gray-700"
+                        >
+                          {item.url}
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Interaction buttons - on the right */}
+                <div className="flex items-center space-x-4">
+                  {/* Comments button */}
+                  <div className="flex flex-col items-center">
+                    <button 
+                      className="p-2 rounded-lg hover:bg-gray-50 transition-colors"
+                      onClick={() => {
+                        const content = prompt('Add your comment:');
+                        if (content) addComment(item.id, content);
+                      }}
+                    >
+                      <svg 
+                        className="w-5 h-5 text-gray-400 hover:text-gray-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                        />
+                      </svg>
+                    </button>
+                    <span className="text-sm font-medium text-gray-900">{item.comments}</span>
+                  </div>
+
+                  {/* Vote button */}
+                  <div className="flex flex-col items-center">
+                    <button 
+                      className="p-2 rounded-lg hover:bg-gray-50 transition-colors"
+                      onClick={() => incrementVotes(item.id)}
+                    >
+                      <svg
+                        className="w-5 h-5 text-gray-400 hover:text-gray-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 15l7-7 7 7"
+                        />
+                      </svg>
+                    </button>
+                    <span className="text-sm font-medium text-gray-900">{item.votes}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      </div>
+    </main>
   );
 }
