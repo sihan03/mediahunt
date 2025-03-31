@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { supabase, MediaItem as SupabaseMediaItem } from '../lib/supabase';
 import { getEmojiForType } from './useMediaIcon';
+import { useAuth } from './useAuth';
 
 // Define the MediaItem type for better type safety
 export interface MediaItem {
@@ -26,6 +27,7 @@ export function useMediaData() {
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const { isAuthenticated, redirectToSignIn } = useAuth();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -82,6 +84,12 @@ export function useMediaData() {
 
   // Function to increment votes for a specific item
   const incrementVotes = async (id: number) => {
+    // Check if user is authenticated
+    if (!isAuthenticated()) {
+      redirectToSignIn();
+      return;
+    }
+
     try {
       // Update the local state optimistically
       setMediaItems(prevItems => 
@@ -108,6 +116,12 @@ export function useMediaData() {
 
   // Function to decrement votes
   const decrementVotes = async (id: number) => {
+    // Check if user is authenticated
+    if (!isAuthenticated()) {
+      redirectToSignIn();
+      return;
+    }
+
     try {
       const currentItem = mediaItems.find(item => item.id === id);
       if (!currentItem || currentItem.votes <= 0) return;
@@ -135,8 +149,14 @@ export function useMediaData() {
     }
   };
 
-  // Function to add a comment
+  // Function to add a comment to a media item
   const addComment = async (id: number, content: string) => {
+    // Check if user is authenticated
+    if (!isAuthenticated()) {
+      redirectToSignIn();
+      return;
+    }
+
     try {
       // Add the comment to the database
       const { error } = await supabase
