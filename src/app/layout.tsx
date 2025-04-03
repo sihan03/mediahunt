@@ -1,6 +1,5 @@
 import './globals.css'
 import type { Metadata } from 'next'
-import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import SignOutButton from '@/components/SignOutButton'
 import { SignInModalProvider } from '@/components/SignInModalProvider'

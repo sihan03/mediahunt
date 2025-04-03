@@ -17,12 +17,6 @@ export interface MediaItem {
   icon: string;
 }
 
-// Type for comment count result
-interface CommentCount {
-  media_item_id: number;
-  count: string;
-}
-
 export function useMediaData() {
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);

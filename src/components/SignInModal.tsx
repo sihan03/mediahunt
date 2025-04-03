@@ -37,8 +37,12 @@ export default function SignInModal({ isOpen, onClose }: SignInModalProps) {
       onClose()
       router.push('/')
       router.refresh()
-    } catch (error: any) {
-      setError(error.message)
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(error.message)
+      } else {
+        setError('An unexpected error occurred')
+      }
     } finally {
       setLoading(false)
     }
@@ -60,8 +64,12 @@ export default function SignInModal({ isOpen, onClose }: SignInModalProps) {
       }
 
       setError('Check your email for the confirmation link.')
-    } catch (error: any) {
-      setError(error.message)
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(error.message)
+      } else {
+        setError('An unexpected error occurred during sign up')
+      }
     } finally {
       setLoading(false)
     }
@@ -84,8 +92,12 @@ export default function SignInModal({ isOpen, onClose }: SignInModalProps) {
       }
       
       // No need to close modal or redirect - Supabase will handle the redirect
-    } catch (error: any) {
-      setError(error.message)
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(error.message)
+      } else {
+        setError('An unexpected error occurred during Google sign in')
+      }
       setLoading(false)
     }
   }
