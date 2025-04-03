@@ -67,6 +67,29 @@ export default function SignInModal({ isOpen, onClose }: SignInModalProps) {
     }
   }
 
+  const handleGoogleSignIn = async () => {
+    setLoading(true)
+    setError(null)
+    
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      })
+      
+      if (error) {
+        throw error
+      }
+      
+      // No need to close modal or redirect - Supabase will handle the redirect
+    } catch (error: any) {
+      setError(error.message)
+      setLoading(false)
+    }
+  }
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Sign up on AI Media Hunt">
       <div className="p-6 space-y-6">
@@ -79,20 +102,34 @@ export default function SignInModal({ isOpen, onClose }: SignInModalProps) {
             <div className="space-y-4">
               <button 
                 className="w-full flex items-center justify-center gap-2 border border-gray-300 bg-white text-gray-700 py-2 px-4 rounded-md hover:bg-gray-50 transition-colors"
-                onClick={() => {}}
+                onClick={handleGoogleSignIn}
+                disabled={loading}
               >
-                <svg className="w-5 h-5" viewBox="0 0 24 24">
-                  <path
-                    fill="currentColor"
-                    d="M21.35 11.1h-9.17v2.73h6.51c-.33 3.81-3.5 5.44-6.5 5.44C8.36 19.27 5 16.25 5 12c0-4.1 3.2-7.27 7.2-7.27c3.09 0 4.9 1.97 4.9 1.97L19 4.72S16.56 2 12.1 2C6.42 2 2.03 6.8 2.03 12c0 5.05 4.13 10 10.22 10c5.35 0 9.25-3.67 9.25-9.09c0-1.15-.15-1.81-.15-1.81Z"
-                  />
-                </svg>
-                Continue with Google
+                {loading ? (
+                  <span className="flex items-center gap-2">
+                    <svg className="animate-spin h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Loading...
+                  </span>
+                ) : (
+                  <>
+                    <svg className="w-5 h-5" viewBox="0 0 24 24">
+                      <path
+                        fill="currentColor"
+                        d="M21.35 11.1h-9.17v2.73h6.51c-.33 3.81-3.5 5.44-6.5 5.44C8.36 19.27 5 16.25 5 12c0-4.1 3.2-7.27 7.2-7.27c3.09 0 4.9 1.97 4.9 1.97L19 4.72S16.56 2 12.1 2C6.42 2 2.03 6.8 2.03 12c0 5.05 4.13 10 10.22 10c5.35 0 9.25-3.67 9.25-9.09c0-1.15-.15-1.81-.15-1.81Z"
+                      />
+                    </svg>
+                    Continue with Google
+                  </>
+                )}
               </button>
               
               <button 
                 className="w-full flex items-center justify-center gap-2 border border-gray-300 bg-white text-gray-700 py-2 px-4 rounded-md hover:bg-gray-50 transition-colors"
                 onClick={() => setShowEmailForm(true)}
+                disabled={loading}
               >
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -100,6 +137,10 @@ export default function SignInModal({ isOpen, onClose }: SignInModalProps) {
                 Continue with Email
               </button>
             </div>
+            
+            {error && (
+              <div className="mt-4 text-red-500 text-sm text-center">{error}</div>
+            )}
           </>
         ) : (
           <>

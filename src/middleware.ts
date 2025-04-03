@@ -38,12 +38,15 @@ export async function middleware(request: NextRequest) {
   // The root path '/' is now publicly accessible
   // We only redirect protected routes, not the home page
   const isHomePage = request.nextUrl.pathname === '/'
+  const isAuthRoute = 
+    request.nextUrl.pathname.startsWith('/signin') || 
+    request.nextUrl.pathname.startsWith('/auth') ||
+    request.nextUrl.pathname.startsWith('/api/auth')
   
   if (
     !user &&
     !isHomePage &&
-    !request.nextUrl.pathname.startsWith('/signin') &&
-    !request.nextUrl.pathname.startsWith('/auth')
+    !isAuthRoute
   ) {
     // no user, redirect to signin page
     const url = request.nextUrl.clone()

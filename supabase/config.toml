@@ -105,9 +105,9 @@ file_size_limit = "50MiB"
 enabled = true
 # The base URL of your website. Used as an allow-list for redirects and for constructing URLs used
 # in emails.
-site_url = "http://127.0.0.1:3000"
+site_url = "http://localhost:3000"
 # A list of *exact* URLs that auth providers are permitted to redirect to post authentication.
-additional_redirect_urls = ["https://127.0.0.1:3000"]
+additional_redirect_urls = []
 # How long tokens are valid for, in seconds. Defaults to 3600 (1 hour), maximum 604,800 (1 week).
 jwt_expiry = 3600
 # If disabled, the refresh token will never expire.
@@ -152,16 +152,20 @@ token_verifications = 30
 enable_signup = true
 double_confirm_changes = true
 enable_confirmations = true
-secure_password_change = true
-max_frequency = "1s"
+secure_password_change = false
+max_frequency = "1m0s"
 otp_length = 6
 otp_expiry = 3600
 
 # Configure SMTP for local testing
 [auth.email.smtp]
-enabled = true
+enabled = false
 sender_name = "MediaHunt"
 admin_email = "admin@mediahunt.com"
+host = "localhost"
+port = 54325
+user = "dummy"
+pass = "env(SUPABASE_AUTH_SMTP_PASS)"
 
 # Uncomment to customize email template
 # [auth.email.template.invite]
