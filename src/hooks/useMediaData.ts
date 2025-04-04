@@ -12,7 +12,9 @@ export interface MediaItem {
   type: string;
   url: string;
   description: string;
-  votes: number;
+  upvotes: number;
+  downvotes: number;
+  vote_count: number;
   comments?: number;
   icon: string;
 }
@@ -59,7 +61,9 @@ export function useMediaData() {
           type: item.type,
           url: item.url,
           description: item.description || '',
-          votes: item.votes,
+          upvotes: item.upvotes,
+          downvotes: item.downvotes,
+          vote_count: item.vote_count,
           comments: commentCounts[item.id] || 0,
           icon: item.icon || getEmojiForType(item.type)
         }));
@@ -76,8 +80,8 @@ export function useMediaData() {
     fetchData();
   }, []);
 
-  // Function to increment votes for a specific item
-  const incrementVotes = async (id: number) => {
+  // Function to upvote a specific item
+  const upvote = async (id: number) => {
     // Check if user is authenticated
     if (!isAuthenticated()) {
       redirectToSignIn();
@@ -88,28 +92,32 @@ export function useMediaData() {
       // Update the local state optimistically
       setMediaItems(prevItems => 
         prevItems.map(item => 
-          item.id === id ? { ...item, votes: item.votes + 1 } : item
+          item.id === id ? { 
+            ...item, 
+            upvotes: item.upvotes + 1,
+            vote_count: item.vote_count + 1
+          } : item
         )
       );
 
-      // Update the vote in the database
+      // Update the upvote in the database
       const { error } = await supabase
         .from('media_items')
-        .update({ votes: mediaItems.find(item => item.id === id)!.votes + 1 })
+        .update({ upvotes: mediaItems.find(item => item.id === id)!.upvotes + 1 })
         .eq('id', id);
 
       if (error) {
         throw error;
       }
     } catch (err) {
-      console.error('Error incrementing votes:', err);
+      console.error('Error upvoting:', err);
       // Revert the optimistic update if there was an error
       setMediaItems(prevItems => [...prevItems]);
     }
   };
 
-  // Function to decrement votes
-  const decrementVotes = async (id: number) => {
+  // Function to downvote
+  const downvote = async (id: number) => {
     // Check if user is authenticated
     if (!isAuthenticated()) {
       redirectToSignIn();
@@ -117,27 +125,28 @@ export function useMediaData() {
     }
 
     try {
-      const currentItem = mediaItems.find(item => item.id === id);
-      if (!currentItem || currentItem.votes <= 0) return;
-
       // Update the local state optimistically
       setMediaItems(prevItems => 
         prevItems.map(item => 
-          item.id === id ? { ...item, votes: item.votes - 1 } : item
+          item.id === id ? { 
+            ...item, 
+            downvotes: item.downvotes + 1,
+            vote_count: item.vote_count - 1
+          } : item
         )
       );
 
-      // Update the vote in the database
+      // Update the downvote in the database
       const { error } = await supabase
         .from('media_items')
-        .update({ votes: currentItem.votes - 1 })
+        .update({ downvotes: mediaItems.find(item => item.id === id)!.downvotes + 1 })
         .eq('id', id);
 
       if (error) {
         throw error;
       }
     } catch (err) {
-      console.error('Error decrementing votes:', err);
+      console.error('Error downvoting:', err);
       // Revert the optimistic update if there was an error
       setMediaItems(prevItems => [...prevItems]);
     }
@@ -176,8 +185,8 @@ export function useMediaData() {
     mediaItems,
     isLoading,
     error,
-    incrementVotes,
-    decrementVotes,
+    upvote,
+    downvote,
     addComment,
   };
 } 

@@ -14,7 +14,9 @@ export type MediaItem = {
   type: string;
   url: string;
   description: string | null;
-  votes: number;
+  upvotes: number;
+  downvotes: number;
+  vote_count: number;
   icon: string | null;
   created_at: string;
   updated_at: string;

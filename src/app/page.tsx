@@ -10,8 +10,8 @@ export default function Home() {
     mediaItems, 
     isLoading, 
     error, 
-    incrementVotes, 
-    addComment 
+    upvote,
+    addComment
   } = useMediaData();
 
   if (isLoading) {
@@ -126,7 +126,7 @@ export default function Home() {
                   <div className="flex flex-col items-center">
                     <button 
                       className="p-2 rounded-lg hover:bg-gray-50 transition-colors"
-                      onClick={() => incrementVotes(item.id)}
+                      onClick={() => upvote(item.id)}
                     >
                       <svg
                         className="w-5 h-5 text-gray-400 hover:text-gray-600"
@@ -142,7 +142,7 @@ export default function Home() {
                         />
                       </svg>
                     </button>
-                    <span className="text-sm font-medium text-gray-900">{item.votes}</span>
+                    <span className="text-sm font-medium text-gray-900">{item.vote_count}</span>
                   </div>
                 </div>
               </div>

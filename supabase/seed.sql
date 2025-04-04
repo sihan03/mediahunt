@@ -25,7 +25,8 @@ insert into media_items (
   type, 
   url, 
   description, 
-  votes, 
+  upvotes, 
+  downvotes, 
   icon, 
   owner_id
 )
@@ -37,6 +38,7 @@ values
     'https://www.lennysnewsletter.com', 
     'Insights, frameworks, and best practices for building products and growing companies.', 
     0, 
+    0, 
     '📰', 
     'd7bed83c-44a0-4a4f-8456-123412341234'
   ),
@@ -46,6 +48,7 @@ values
     'article', 
     'https://www.technologyreview.com', 
     'The latest technology news and analysis from MIT.', 
+    0, 
     0, 
     '🧑‍🔬', 
     'd7bed83c-44a0-4a4f-8456-123412341234'
@@ -57,6 +60,7 @@ values
     'https://tldr.tech', 
     'Tech news and developments summarized in a concise, readable format.', 
     0, 
+    0, 
     '📱', 
     'd7bed83c-44a0-4a4f-8456-123412341234'
   ),
@@ -66,6 +70,7 @@ values
     'article', 
     'https://www.acquired.fm', 
     'Deep dives into great technology companies and startup acquisitions.', 
+    0, 
     0, 
     '💼', 
     'd7bed83c-44a0-4a4f-8456-123412341234'
@@ -77,6 +82,7 @@ values
     'https://www.youtube.com/@Fireship', 
     'Fast-paced videos about modern web development.', 
     0, 
+    0, 
     '🔥', 
     'd7bed83c-44a0-4a4f-8456-123412341234'
   ),
@@ -87,6 +93,7 @@ values
     'https://www.youtube.com/@aiDotEngineer', 
     'Content focused on AI engineering and applications.', 
     0, 
+    0, 
     '🤖', 
     'd7bed83c-44a0-4a4f-8456-123412341234'
   ),
@@ -96,6 +103,7 @@ values
     'video', 
     'https://www.youtube.com/@AndrejKarpathy', 
     'In-depth explanations of machine learning concepts and implementations.', 
+    0, 
     0, 
     '🧠', 
     'd7bed83c-44a0-4a4f-8456-123412341234'
