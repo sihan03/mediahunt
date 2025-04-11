@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { supabase, MediaItem as SupabaseMediaItem } from '../lib/supabase';
+import { createClient } from '../lib/supabase/client';
+import { MediaItem as SupabaseMediaItem } from '../lib/supabase';
 import { getEmojiForType } from './useMediaIcon';
 import { useAuth } from './useAuth';
 
@@ -24,6 +25,7 @@ type RemoveVoteParams = { p_media_item_id: number };
 type RpcParams = HandleVoteParams | RemoveVoteParams;
 
 export function useMediaData() {
+  const supabase = createClient();
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
