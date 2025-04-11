@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase, MediaItem as SupabaseMediaItem } from '../lib/supabase';
 import { getEmojiForType } from './useMediaIcon';
 import { useAuth } from './useAuth';
-import { User } from '@supabase/supabase-js';
 
 // Define the UserVote type
 interface UserVote {
@@ -18,6 +17,11 @@ export interface MediaItem extends Omit<SupabaseMediaItem, 'owner_id'> {
   icon: string;
   currentUserVote?: 1 | -1 | null;
 }
+
+// Define RPC Parameter Types
+type HandleVoteParams = { p_media_item_id: number; p_vote_type: 1 | -1 };
+type RemoveVoteParams = { p_media_item_id: number };
+type RpcParams = HandleVoteParams | RemoveVoteParams;
 
 export function useMediaData() {
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
@@ -83,13 +87,20 @@ export function useMediaData() {
       }));
       
       setMediaItems(transformedData);
-    } catch (err: any) {
+    } catch (err: unknown) {
+      // Add type check before accessing properties
+      let errorMessage = 'An unknown error occurred while fetching data';
+      if (err instanceof Error) {
+          errorMessage = err.message;
+      } else if (typeof err === 'string') {
+          errorMessage = err;
+      }
       console.error('Error fetching media items:', err);
-      setError(`Failed to fetch media items: ${err.message || err}`);
+      setError(`Failed to fetch media items: ${errorMessage}`);
     } finally {
       setIsLoading(false);
     }
-  }, [user]); // Dependency is user from useAuth
+  }, [user]);
 
   // useEffect should be at the top level of the hook
   useEffect(() => {
@@ -116,17 +127,17 @@ export function useMediaData() {
     let optimisticCurrentUserVote: 1 | -1 | null = item.currentUserVote ?? null;
 
     let action: 'handle_vote' | 'remove_vote' | null = null;
-    let params: any = null;
+    let params: RpcParams | null = null;
 
     if (currentVote === newVoteType) {
       action = 'remove_vote';
-      params = { p_media_item_id: id };
+      params = { p_media_item_id: id } as RemoveVoteParams;
       optimisticCurrentUserVote = null;
       if (newVoteType === 1) optimisticUpvotes--;
       else optimisticDownvotes--;
     } else {
       action = 'handle_vote';
-      params = { p_media_item_id: id, p_vote_type: newVoteType };
+      params = { p_media_item_id: id, p_vote_type: newVoteType } as HandleVoteParams;
       optimisticCurrentUserVote = newVoteType;
       if (newVoteType === 1) {
         optimisticUpvotes++;
@@ -155,9 +166,17 @@ export function useMediaData() {
       if (rpcError) {
         throw rpcError;
       }
-    } catch (err: any) {
-      console.error(`Error ${action === 'remove_vote' ? 'removing' : 'handling'} vote:`, err);
-      setError(`Failed to ${action === 'remove_vote' ? 'remove' : 'cast'} vote: ${err.message || err}`);
+    } catch (err: unknown) {
+      // Add type check before accessing properties
+      let errorMessage = 'An unknown error occurred while voting';
+      if (err instanceof Error) {
+          errorMessage = err.message;
+      } else if (typeof err === 'string') {
+         errorMessage = err;
+      }
+      const actionDescription = action === 'remove_vote' ? 'removing' : 'handling';
+      console.error(`Error ${actionDescription} vote:`, err);
+      setError(`Failed to ${action === 'remove_vote' ? 'remove' : 'cast'} vote: ${errorMessage}`);
       setMediaItems(originalItems);
     }
   };
@@ -193,9 +212,16 @@ export function useMediaData() {
         }
          throw error;
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
+      // Add type check before accessing properties
+      let errorMessage = 'An unknown error occurred while adding comment';
+      if (err instanceof Error) {
+          errorMessage = err.message;
+      } else if (typeof err === 'string') {
+          errorMessage = err;
+      }
       console.error('Error adding comment:', err);
-      setError(`Failed to add comment: ${err.message || err}`);
+      setError(`Failed to add comment: ${errorMessage}`);
       setMediaItems(originalItems);
     }
   };
