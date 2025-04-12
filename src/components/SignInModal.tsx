@@ -80,10 +80,15 @@ export default function SignInModal({ isOpen, onClose }: SignInModalProps) {
     setError(null)
     
     try {
+      // Determine the appropriate redirect URL based on the environment
+      const redirectUrl = process.env.NODE_ENV === 'development' 
+        ? 'http://localhost:3000'
+        : window.location.origin;
+        
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: window.location.origin,
+          redirectTo: redirectUrl,
         },
       })
       

@@ -33,7 +33,7 @@ export function useAuth() {
     return () => {
       authListener.subscription.unsubscribe();
     };
-  }, [supabase.auth]);
+  }, [supabase.auth]); 
 
   const redirectToSignIn = () => {
     router.push('/signin');

@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
+import useSWR from 'swr';
 import { createClient } from '../lib/supabase/client';
 import { MediaItem as SupabaseMediaItem } from '../lib/supabase';
 import { getEmojiForType } from './useMediaIcon';
@@ -14,7 +15,7 @@ interface UserVote {
 
 // Define the MediaItem type for better type safety
 export interface MediaItem extends Omit<SupabaseMediaItem, 'owner_id'> {
-  comments: number;
+  comments: number; // Still a placeholder
   icon: string;
   currentUserVote?: 1 | -1 | null;
 }
@@ -26,215 +27,235 @@ type RpcParams = HandleVoteParams | RemoveVoteParams;
 
 export function useMediaData() {
   const supabase = createClient();
-  const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
   const { user, isAuthenticated, redirectToSignIn } = useAuth();
+  const userId = user?.id;
+  const [mutationError, setMutationError] = useState<string | null>(null); // For vote/comment errors
 
-  // Fetch data including user's votes
-  const fetchData = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      
-      // Fetch media items from Supabase
-      const { data: mediaItemsData, error: mediaItemsError } = await supabase
-        .from('media_items')
-        .select('*');
-      
-      if (mediaItemsError) {
-        throw mediaItemsError;
-      }
+  // --- SWR Fetcher Logic ---
+  const fetcher = useCallback(async ([_key, currentUserId]: [string, string | undefined]) => {
+    console.log('Fetching media data with user ID:', currentUserId); // Add console log
+    // Fetch media items from Supabase
+    const { data: mediaItemsData, error: mediaItemsError } = await supabase
+      .from('media_items')
+      .select('*')
+    
+    if (mediaItemsError) {
+      console.error('Error fetching media items:', mediaItemsError);
+      throw mediaItemsError;
+    }
 
-      // Fetch comments count (simplified - consider a view or function for performance)
-      // NOTE: Adjust this logic if you need an accurate live comment count.
-      // Using head: true gives total count but doesn't help with per-item count easily here.
-      // A separate query or database view/function might be better.
-      const commentCount = 0; // Placeholder - Fetching per-item count efficiently needs review
+    // Fetch comments count (simplified - consider a view or function for performance)
+    const commentCount = 0; // Placeholder
 
-      // Fetch user's votes IF authenticated
-      let userVotes: UserVote[] = [];
-      const userId = user?.id;
+    // Fetch user's votes IF authenticated
+    let userVotes: UserVote[] = [];
+    if (currentUserId) {
+      const { data: userVotesData, error: userVotesError } = await supabase
+        .from('user_votes')
+        .select('media_item_id, vote_type')
+        .eq('user_id', currentUserId);
 
-      if (userId) {
-        const { data: userVotesData, error: userVotesError } = await supabase
-          .from('user_votes')
-          .select('media_item_id, vote_type')
-          .eq('user_id', userId);
-
-        if (userVotesError) throw userVotesError;
+      if (userVotesError) {
+        console.error('Error fetching user votes:', userVotesError);
+        // Decide if you want to throw or just continue without votes
+        // throw userVotesError; 
+      } else {
         userVotes = userVotesData || [];
       }
-
-      const userVotesMap = userVotes.reduce((acc, vote) => {
-        acc[vote.media_item_id] = vote.vote_type;
-        return acc;
-      }, {} as Record<number, 1 | -1>);
-
-      // Transform data
-      const transformedData: MediaItem[] = mediaItemsData.map((item): MediaItem => ({
-        id: item.id,
-        title: item.title,
-        type: item.type,
-        url: item.url,
-        description: item.description || '',
-        upvotes: item.upvotes,
-        downvotes: item.downvotes,
-        vote_count: item.vote_count,
-        comments: commentCount, // Use placeholder or implement better count fetching
-        icon: item.icon || getEmojiForType(item.type),
-        created_at: item.created_at,
-        updated_at: item.updated_at,
-        currentUserVote: userVotesMap[item.id] || null,
-      }));
-      
-      setMediaItems(transformedData);
-    } catch (err: unknown) {
-      // Add type check before accessing properties
-      let errorMessage = 'An unknown error occurred while fetching data';
-      if (err instanceof Error) {
-          errorMessage = err.message;
-      } else if (typeof err === 'string') {
-          errorMessage = err;
-      }
-      console.error('Error fetching media items:', err);
-      setError(`Failed to fetch media items: ${errorMessage}`);
-    } finally {
-      setIsLoading(false);
     }
-  }, [user]);
 
-  // useEffect should be at the top level of the hook
-  useEffect(() => {
-    fetchData();
-    // Setup realtime subscriptions if needed here
-  }, [fetchData]); // Correct dependency
+    const userVotesMap = userVotes.reduce((acc, vote) => {
+      acc[vote.media_item_id] = vote.vote_type;
+      return acc;
+    }, {} as Record<number, 1 | -1>);
 
-  // Combined function to handle voting (upvote, downvote, remove vote)
-  const handleVote = async (id: number, newVoteType: 1 | -1) => {
+    // Transform data
+    const transformedData: MediaItem[] = (mediaItemsData || []).map((item): MediaItem => ({
+      id: item.id,
+      title: item.title,
+      type: item.type,
+      url: item.url,
+      description: item.description || '',
+      upvotes: item.upvotes,
+      downvotes: item.downvotes,
+      vote_count: item.vote_count,
+      comments: commentCount, // Use placeholder
+      icon: item.icon || getEmojiForType(item.type),
+      created_at: item.created_at,
+      updated_at: item.updated_at,
+      currentUserVote: userVotesMap[item.id] || null,
+    }));
+    
+    return transformedData;
+  }, [supabase]); // supabase client is stable, no need for user dependency here
+
+  // --- SWR Hook Usage ---
+  const swrKey = userId ? ['media_items', userId] : ['media_items', null]; // Key changes based on auth state
+  const { 
+    data: mediaItems = [], // Default to empty array
+    error: fetchError, // Renamed to avoid conflict
+    isLoading, 
+    mutate 
+  } = useSWR<MediaItem[]>(
+    swrKey, // Unique key for the data, includes userId
+    fetcher,
+    {
+      revalidateOnFocus: false, // Standard SWR behavior
+      // Add error handling specific to fetching
+      onError: (err) => {
+        console.error("SWR fetch error:", err);
+        // Optionally set a specific fetch error state if needed differently from mutationError
+      }
+    }
+  );
+
+  // --- Mutation Logic (Voting) ---
+  const handleVote = useCallback(async (id: number, newVoteType: 1 | -1) => {
     if (!isAuthenticated()) {
       redirectToSignIn();
       return;
     }
+    if (!mediaItems) return; // Should not happen with default value
 
-    const originalItems = [...mediaItems];
+    setMutationError(null); // Clear previous mutation errors
+
     const itemIndex = mediaItems.findIndex(item => item.id === id);
     if (itemIndex === -1) return;
 
     const item = mediaItems[itemIndex];
     const currentVote = item.currentUserVote;
 
-    let optimisticUpvotes = item.upvotes;
-    let optimisticDownvotes = item.downvotes;
-    let optimisticCurrentUserVote: 1 | -1 | null = item.currentUserVote ?? null;
-
-    let action: 'handle_vote' | 'remove_vote' | null = null;
-    let params: RpcParams | null = null;
+    let action: 'handle_vote' | 'remove_vote';
+    let params: RpcParams;
+    let optimisticData: MediaItem[];
 
     if (currentVote === newVoteType) {
+      // --- Optimistic Remove Vote ---
       action = 'remove_vote';
       params = { p_media_item_id: id } as RemoveVoteParams;
-      optimisticCurrentUserVote = null;
-      if (newVoteType === 1) optimisticUpvotes--;
-      else optimisticDownvotes--;
-    } else {
-      action = 'handle_vote';
-      params = { p_media_item_id: id, p_vote_type: newVoteType } as HandleVoteParams;
-      optimisticCurrentUserVote = newVoteType;
-      if (newVoteType === 1) {
-        optimisticUpvotes++;
-        if (currentVote === -1) optimisticDownvotes--;
-      } else { 
-        optimisticDownvotes++;
-        if (currentVote === 1) optimisticUpvotes--;
-      }
-    }
-
-    setMediaItems(prevItems =>
-      prevItems.map(prevItem =>
+      optimisticData = mediaItems.map(prevItem =>
         prevItem.id === id ? {
           ...prevItem,
-          upvotes: optimisticUpvotes,
-          downvotes: optimisticDownvotes,
-          vote_count: optimisticUpvotes - optimisticDownvotes,
-          currentUserVote: optimisticCurrentUserVote
+          upvotes: prevItem.upvotes - (newVoteType === 1 ? 1 : 0),
+          downvotes: prevItem.downvotes - (newVoteType === -1 ? 1 : 0),
+          vote_count: prevItem.vote_count - newVoteType,
+          currentUserVote: null
         } : prevItem
-      )
-    );
-
-    try {
-      if (!action) return;
-      const { error: rpcError } = await supabase.rpc(action, params);
-      if (rpcError) {
-        throw rpcError;
-      }
-    } catch (err: unknown) {
-      // Add type check before accessing properties
-      let errorMessage = 'An unknown error occurred while voting';
-      if (err instanceof Error) {
-          errorMessage = err.message;
-      } else if (typeof err === 'string') {
-         errorMessage = err;
-      }
-      const actionDescription = action === 'remove_vote' ? 'removing' : 'handling';
-      console.error(`Error ${actionDescription} vote:`, err);
-      setError(`Failed to ${action === 'remove_vote' ? 'remove' : 'cast'} vote: ${errorMessage}`);
-      setMediaItems(originalItems);
+      );
+    } else {
+      // --- Optimistic Handle Vote (Add or Change) ---
+      action = 'handle_vote';
+      params = { p_media_item_id: id, p_vote_type: newVoteType } as HandleVoteParams;
+      optimisticData = mediaItems.map(prevItem =>
+        prevItem.id === id ? {
+          ...prevItem,
+          // Adjust counts based on previous vote state
+          upvotes: prevItem.upvotes + (newVoteType === 1 ? 1 : 0) - (currentVote === 1 ? 1 : 0),
+          downvotes: prevItem.downvotes + (newVoteType === -1 ? 1 : 0) - (currentVote === -1 ? 1 : 0),
+          // Recalculate vote_count based on new up/down votes
+          vote_count: (prevItem.upvotes + (newVoteType === 1 ? 1 : 0) - (currentVote === 1 ? 1 : 0)) - 
+                       (prevItem.downvotes + (newVoteType === -1 ? 1 : 0) - (currentVote === -1 ? 1 : 0)),
+          currentUserVote: newVoteType
+        } : prevItem
+      );
     }
-  };
 
-  // Specific upvote/downvote functions calling the handler
-  const upvote = (id: number) => handleVote(id, 1);
-  const downvote = (id: number) => handleVote(id, -1);
+    // Perform Optimistic Update
+    try {
+      await mutate(optimisticData, {
+        optimisticData: optimisticData, // Provide the calculated optimistic data
+        rollbackOnError: true, // Automatically rollback on API error
+        populateCache: true,   // Update the cache immediately
+        revalidate: false      // Don't revalidate yet, wait for RPC call
+      });
 
-  // Function to add a comment to a media item
-  const addComment = async (id: number, content: string) => {
-    if (!isAuthenticated() || !user?.id) {
+      // Perform API Call
+      const { error: rpcError } = await supabase.rpc(action, params);
+
+      if (rpcError) {
+        console.error(`Error calling RPC ${action}:`, rpcError);
+        throw rpcError; // This will trigger the rollbackOnError
+      }
+
+      // Optional: Explicitly revalidate after successful RPC if needed, 
+      // but optimistic update often suffices. Consider if real-time counts matter.
+      // mutate(); // Revalidates the SWR key
+
+    } catch (err: unknown) {
+      let errorMessage = `Failed to ${action === 'remove_vote' ? 'remove' : 'cast'} vote.`;
+      if (err instanceof Error) {
+        errorMessage += ` Error: ${err.message}`;
+      }
+      console.error(errorMessage, err);
+      setMutationError(errorMessage);
+      // SWR handles rollback automatically because rollbackOnError is true
+    }
+  }, [isAuthenticated, mediaItems, mutate, redirectToSignIn, supabase]);
+
+
+  // --- Mutation Logic (Adding Comment) ---
+  const addComment = useCallback(async (id: number, content: string) => {
+    if (!isAuthenticated() || !userId) {
       redirectToSignIn();
       return;
     }
+    if (!mediaItems) return;
 
-    const userId = user.id;
-    const originalItems = [...mediaItems];
+    setMutationError(null);
 
-    setMediaItems(prevItems =>
-      prevItems.map(item =>
-        item.id === id ? { ...item, comments: (item.comments || 0) + 1 } : item
-      )
+    // Optimistic Update (Placeholder: Increment local count. Ideally re-fetch or get new count)
+    const optimisticData = mediaItems.map(item =>
+      item.id === id ? { ...item, comments: (item.comments || 0) + 1 } : item
     );
-
+    
     try {
+       await mutate(optimisticData, {
+         optimisticData: optimisticData,
+         rollbackOnError: true,
+         populateCache: true,
+         revalidate: false // Don't refetch list just for a comment count placeholder
+       });
+
+      // API Call
       const { error } = await supabase
         .from('comments')
         .insert({ media_item_id: id, content: content, user_id: userId });
 
       if (error) {
-        if (error.code === '42501') { 
+         if (error.code === '42501') { 
            throw new Error("You don't have permission to add this comment. Ensure you are logged in.");
-        }
+         }
          throw error;
       }
-    } catch (err: unknown) {
-      // Add type check before accessing properties
-      let errorMessage = 'An unknown error occurred while adding comment';
-      if (err instanceof Error) {
-          errorMessage = err.message;
-      } else if (typeof err === 'string') {
-          errorMessage = err;
-      }
-      console.error('Error adding comment:', err);
-      setError(`Failed to add comment: ${errorMessage}`);
-      setMediaItems(originalItems);
-    }
-  };
+      
+      // If using real comment counts, you might revalidate here or just rely
+      // on the optimistic update + future revalidations.
+      // mutate(); // Revalidate the list if comment count affects it directly
 
-  // Return statement for the hook
+    } catch (err: unknown) {
+      let errorMessage = 'Failed to add comment.';
+      if (err instanceof Error) {
+          errorMessage += ` Error: ${err.message}`;
+      }
+      console.error(errorMessage, err);
+      setMutationError(errorMessage);
+      // SWR handles rollback for the comment count placeholder if needed
+    }
+  }, [isAuthenticated, mediaItems, mutate, redirectToSignIn, supabase, userId]);
+
+
+  // Specific upvote/downvote functions calling the handler
+  const upvote = useCallback((id: number) => handleVote(id, 1), [handleVote]);
+  const downvote = useCallback((id: number) => handleVote(id, -1), [handleVote]);
+
+  // --- Return Values ---
   return {
-    mediaItems,
-    isLoading,
-    error,
+    mediaItems, // Data from SWR
+    isLoading,  // Loading state from SWR
+    error: fetchError || mutationError, // Combine fetch and mutation errors (or handle separately)
     upvote,
     downvote,
     addComment,
-  }; // Ensure this closing brace is correct
+    mutate, // Expose mutate directly if needed by the component
+  };
 } 
