@@ -38,6 +38,7 @@ export function useMediaData() {
     const { data: mediaItemsData, error: mediaItemsError } = await supabase
       .from('media_items')
       .select('*')
+      .order('vote_count', { ascending: false })
     
     if (mediaItemsError) {
       console.error('Error fetching media items:', mediaItemsError);
