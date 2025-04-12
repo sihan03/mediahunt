@@ -32,7 +32,7 @@ export function useMediaData() {
   const [mutationError, setMutationError] = useState<string | null>(null); // For vote/comment errors
 
   // --- SWR Fetcher Logic ---
-  const fetcher = useCallback(async ([_, currentUserId]: [string, string | undefined]) => {
+  const fetcher = useCallback(async ([, currentUserId]: [string, string | undefined]) => {
     console.log('Fetching media data with user ID:', currentUserId); // Add console log
     // Fetch media items from Supabase
     const { data: mediaItemsData, error: mediaItemsError } = await supabase
