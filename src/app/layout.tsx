@@ -29,12 +29,11 @@ export default async function RootLayout({
         >
           <SignInModalProvider>
             <header className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 z-10">
-              <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <span className="text-3xl" role="img" aria-label="Robot">🕵️</span>
                   <div>
-                    <h1 className="text-xl font-semibold text-gray-900">MediaHunt</h1>
-                    <p className="text-sm text-gray-500">Discover and vote for the best AI media sources</p>
+                    <h1 className="text-3xl font-bold font-serif text-gray-900">MediaHunt</h1>
                   </div>
                 </div>
                 {user ? (

@@ -10,7 +10,7 @@ const signalOfTheWeek = [
   {
     id: 1,
     rank: 1,
-    title: "Meta’s vanilla Maverick AI model ranks below rivals on a popular chat benchmark",
+    title: "Meta's vanilla Maverick AI model ranks below rivals on a popular chat benchmark",
     source: "TechCrunch",
     imageUrl: "/number1.webp" 
   },
@@ -82,7 +82,7 @@ export default function Home() {
       {/* Signal of the Week Section */}
       <div className="bg-signal-bg border-b border-gray-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Signal of the Week</h2>
+          <h2 className="text-2xl font-sans text-gray-900 mb-4">Signal of the Week</h2>
           
           <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-6">
             {/* Top signals */}
@@ -109,13 +109,13 @@ export default function Home() {
                   )}
                   
                   {/* Badge overlay */}
-                  <div className="absolute top-3 left-3 bg-black bg-opacity-70 text-white px-3 py-1.5 rounded-full text-base font-bold">
+                  <div className="absolute top-3 left-3 bg-black bg-opacity-70 text-white px-3 py-1.5 rounded-full text-base font-sans">
                     No.{signalOfTheWeek[0].rank} 🥇
                   </div>
                   
                   {/* Title overlay */}
                   <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent pt-16 pb-4 px-4">
-                    <h3 className="font-semibold text-xl text-white">
+                    <h3 className="font-sans text-xl text-white">
                       {signalOfTheWeek[0].title}
                     </h3>
                     <p className="text-sm text-gray-200 mt-1">
@@ -148,13 +148,13 @@ export default function Home() {
                     )}
                     
                     {/* Badge overlay */}
-                    <div className="absolute top-2 left-2 bg-black bg-opacity-70 text-white px-2 py-1 rounded-full text-sm font-bold">
+                    <div className="absolute top-2 left-2 bg-black bg-opacity-70 text-white px-2 py-1 rounded-full text-sm font-sans">
                       No.{signalOfTheWeek[1].rank} 🥈
                     </div>
                     
                     {/* Title overlay */}
                     <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent pt-10 pb-3 px-3">
-                      <h3 className="font-medium text-sm text-white line-clamp-2">
+                      <h3 className="font-sans text-sm text-white line-clamp-2">
                         {signalOfTheWeek[1].title}
                       </h3>
                       <p className="text-xs text-gray-200">
@@ -185,13 +185,13 @@ export default function Home() {
                     )}
                     
                     {/* Badge overlay */}
-                    <div className="absolute top-2 left-2 bg-black bg-opacity-70 text-white px-2 py-1 rounded-full text-sm font-bold">
+                    <div className="absolute top-2 left-2 bg-black bg-opacity-70 text-white px-2 py-1 rounded-full text-sm font-sans">
                       No.{signalOfTheWeek[2].rank} 🥉
                     </div>
                     
                     {/* Title overlay */}
                     <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent pt-10 pb-3 px-3">
-                      <h3 className="font-medium text-sm text-white line-clamp-2">
+                      <h3 className="font-sans text-sm text-white line-clamp-2">
                         {signalOfTheWeek[2].title}
                       </h3>
                       <p className="text-xs text-gray-200">
@@ -205,7 +205,7 @@ export default function Home() {
             
             {/* Noise of the week */}
             <div className="md:w-1/3 bg-gray-100 rounded-lg p-4">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">Noise of the Week</h3>
+              <h3 className="text-lg font-sans text-gray-900 mb-3">Noise of the Week</h3>
               <div className="space-y-3">
                 {noiseOfTheWeek.map((noise) => (
                   <a 
@@ -216,9 +216,9 @@ export default function Home() {
                     className="block bg-white p-3 rounded-md shadow-sm hover:shadow-lg transition-shadow duration-150"
                   >
                     <div className="flex items-start space-x-2">
-                      <span className="text-red-500 font-bold">#{noise.rank}</span>
+                      <span className="text-red-500 font-sans">#{noise.rank}</span>
                       <div>
-                        <p className="text-sm font-medium text-gray-900">{noise.title}</p>
+                        <p className="text-sm font-sans text-gray-900">{noise.title}</p>
                         <p className="text-xs text-gray-500">{noise.source}</p>
                       </div>
                     </div>
@@ -231,7 +231,7 @@ export default function Home() {
       </div>
       
       {/* Main content */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="space-y-4">
           {mediaItems.map((item) => (
             <div
@@ -273,10 +273,10 @@ export default function Home() {
                       </span>
                     )}
                     <div>
-                      <h2 className="text-lg font-medium text-gray-900">{item.title}</h2>
+                      <h2 className="text-lg font-sans text-gray-900">{item.title}</h2>
                       <p className="text-sm text-gray-500">{item.description}</p>
                       <div className="mt-2 flex items-center space-x-4">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-sans bg-gray-100 text-gray-800">
                           {item.type}
                         </span>
                         <a
@@ -315,7 +315,7 @@ export default function Home() {
                         />
                       </svg>
                     </button>
-                    <span className="text-sm font-medium px-2 min-w-[20px] text-center">{item.vote_count}</span>
+                    <span className="text-sm font-sans px-2 min-w-[20px] text-center">{item.vote_count}</span>
                     <button 
                       className="p-1 rounded-full hover:bg-gray-200 transition-colors"
                       onClick={() => downvote(item.id)}
@@ -359,7 +359,7 @@ export default function Home() {
                           d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
                         />
                       </svg>
-                      <span className="text-sm font-medium text-gray-700">{item.comments}</span>
+                      <span className="text-sm font-sans text-gray-700">{item.comments}</span>
                     </button>
                   </div>
                 </div>

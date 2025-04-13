@@ -2,4 +2,6 @@
 
 @theme {
   --color-signal-bg: #F8F4E9;
+  --font-header-title: 'Alright Sans', sans-serif;
+  --font-body-title: 'Alright Sans', sans-serif;
 }
