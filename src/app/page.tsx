@@ -17,7 +17,7 @@ const signalOfTheWeek = [
   {
     id: 2,
     rank: 2,
-    title: "New Neural Network Architecture Achieves 40% Performance Boost",
+    title: "心识宇宙的Second Me Github获得10k+ Star",
     source: "Tech AI Review",
     imageUrl: "/number2.webp"
   },
@@ -82,7 +82,7 @@ export default function Home() {
       {/* Signal of the Week Section */}
       <div className="bg-signal-bg border-b border-gray-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <h2 className="text-2xl font-sans text-gray-900 mb-4">Signal of the Week</h2>
+          <h2 className="text-2xl font-serif text-gray-900 mb-4">Signal of the Week</h2>
           
           <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-6">
             {/* Top signals */}
@@ -205,7 +205,7 @@ export default function Home() {
             
             {/* Noise of the week */}
             <div className="md:w-1/3 bg-gray-100 rounded-lg p-4">
-              <h3 className="text-lg font-sans text-gray-900 mb-3">Noise of the Week</h3>
+              <h3 className="text-lg font-serif text-gray-900 mb-3">Noise of the Week</h3>
               <div className="space-y-3">
                 {noiseOfTheWeek.map((noise) => (
                   <a 
