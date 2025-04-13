@@ -10,9 +10,9 @@ const signalOfTheWeek = [
   {
     id: 1,
     rank: 1,
-    title: "AI-Generated Content Detection Breakthrough",
-    source: "AI Research Journal",
-    imageUrl: "/number1.webp" // Placeholder image
+    title: "Meta’s vanilla Maverick AI model ranks below rivals on a popular chat benchmark",
+    source: "TechCrunch",
+    imageUrl: "/number1.webp" 
   },
   {
     id: 2,
@@ -40,8 +40,8 @@ const noiseOfTheWeek = [
   {
     id: 102,
     rank: 2,
-    title: "Study Shows AI Has Achieved General Intelligence, Details Unclear",
-    source: "Future Technology News"
+    title: "高能预警，谷歌神器一句话P图全网震动！PS直接淘汰，模特广告业不存在了？",
+    source: "新智元"
   },
   {
     id: 103, 
@@ -80,7 +80,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-gray-50">
       {/* Signal of the Week Section */}
-      <div className="bg-white border-b border-gray-200 shadow-sm">
+      <div className="bg-signal-bg border-b border-gray-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Signal of the Week</h2>
           
@@ -88,9 +88,12 @@ export default function Home() {
             {/* Top signals */}
             <div className="md:w-2/3 flex flex-col md:flex-row gap-4">
               {/* First item takes 100% width on mobile, 66% on desktop */}
-              <div 
-                key={signalOfTheWeek[0].id} 
-                className="relative rounded-lg overflow-hidden shadow-md bg-white flex-grow md:w-2/3"
+              <a 
+                href="https://techcrunch.com/2025/04/11/metas-vanilla-maverick-ai-model-ranks-below-rivals-on-a-popular-chat-benchmark/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="block relative rounded-lg overflow-hidden shadow-md bg-white flex-grow md:w-2/3"
+                key={signalOfTheWeek[0].id}
               >
                 <div className="bg-gray-300 h-72 md:h-96 relative">
                   {/* Placeholder image or actual image when available */}
@@ -120,14 +123,17 @@ export default function Home() {
                     </p>
                   </div>
                 </div>
-              </div>
+              </a>
 
               {/* Container for items 2 and 3 in a flex column */}
               <div className="flex flex-col md:w-1/3 h-full gap-4">
                 {/* Item 2 */}
-                <div 
-                  key={signalOfTheWeek[1].id} 
-                  className="relative rounded-lg overflow-hidden shadow-md bg-white flex-1"
+                <a 
+                  href="https://youtube.com" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="block relative rounded-lg overflow-hidden shadow-md bg-white flex-1"
+                  key={signalOfTheWeek[1].id}
                 >
                   <div className="bg-gray-300 h-full relative">
                     {/* Placeholder image or actual image when available */}
@@ -156,12 +162,15 @@ export default function Home() {
                       </p>
                     </div>
                   </div>
-                </div>
+                </a>
                 
                 {/* Item 3 */}
-                <div 
+                <a 
+                  href="https://youtube.com" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="block relative rounded-lg overflow-hidden shadow-md bg-white flex-1"
                   key={signalOfTheWeek[2].id} 
-                  className="relative rounded-lg overflow-hidden shadow-md bg-white flex-1"
                 >
                   <div className="bg-gray-300 h-full relative">
                     {/* Placeholder image or actual image when available */}
@@ -190,7 +199,7 @@ export default function Home() {
                       </p>
                     </div>
                   </div>
-                </div>
+                </a>
               </div>
             </div>
             
@@ -199,7 +208,13 @@ export default function Home() {
               <h3 className="text-lg font-semibold text-gray-900 mb-3">Noise of the Week</h3>
               <div className="space-y-3">
                 {noiseOfTheWeek.map((noise) => (
-                  <div key={noise.id} className="bg-white p-3 rounded-md shadow-sm">
+                  <a 
+                    href="https://youtube.com" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    key={noise.id} 
+                    className="block bg-white p-3 rounded-md shadow-sm hover:shadow-lg transition-shadow duration-150"
+                  >
                     <div className="flex items-start space-x-2">
                       <span className="text-red-500 font-bold">#{noise.rank}</span>
                       <div>
@@ -207,7 +222,7 @@ export default function Home() {
                         <p className="text-xs text-gray-500">{noise.source}</p>
                       </div>
                     </div>
-                  </div>
+                  </a>
                 ))}
               </div>
             </div>
