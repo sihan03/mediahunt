@@ -205,7 +205,7 @@ export default function Home() {
             
             {/* Noise of the week */}
             <div className="md:w-1/3 bg-gray-100 rounded-lg p-4">
-              <h3 className="text-lg font-serif text-gray-900 mb-3">Noise of the Week</h3>
+              <h3 className="text-2xl font-serif text-gray-900 mb-3">🚮 Noise of the Week</h3>
               <div className="space-y-3">
                 {noiseOfTheWeek.map((noise) => (
                   <a 
