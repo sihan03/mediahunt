@@ -80,7 +80,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-gray-50">
       {/* Signal of the Week Section */}
-      <div className="bg-signal-bg border-b border-gray-200 shadow-sm">
+      <div className="bg-signal-bg border-b border-gray-200 shadow-sm pt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <h2 className="text-2xl font-serif text-gray-900 mb-4">Signal of the Week</h2>
           

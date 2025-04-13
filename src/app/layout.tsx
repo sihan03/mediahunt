@@ -47,7 +47,7 @@ export default async function RootLayout({
               </div>
             </header>
             
-            <div className="pt-20">
+            <div className="">
               {children}
             </div>
           </SignInModalProvider>
