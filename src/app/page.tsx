@@ -5,6 +5,52 @@ import Image from 'next/image';
 import { useMediaData } from '@/hooks/useMediaData';
 import { getEmojiForType } from '@/hooks/useMediaIcon';
 
+// Placeholder data for Signal/Noise of the Week
+const signalOfTheWeek = [
+  {
+    id: 1,
+    rank: 1,
+    title: "AI-Generated Content Detection Breakthrough",
+    source: "AI Research Journal",
+    imageUrl: "/number1.webp" // Placeholder image
+  },
+  {
+    id: 2,
+    rank: 2,
+    title: "New Neural Network Architecture Achieves 40% Performance Boost",
+    source: "Tech AI Review",
+    imageUrl: "/number2.webp"
+  },
+  {
+    id: 3,
+    rank: 3,
+    title: "Explainable AI Framework for Healthcare Applications",
+    source: "Medical AI Society",
+    imageUrl: "/number3.webp"
+  }
+];
+
+const noiseOfTheWeek = [
+  {
+    id: 101,
+    rank: 1,
+    title: "AI Will Replace All Writers by Next Month, Claims Startup CEO",
+    source: "Tech Hype Daily"
+  },
+  {
+    id: 102,
+    rank: 2,
+    title: "Study Shows AI Has Achieved General Intelligence, Details Unclear",
+    source: "Future Technology News"
+  },
+  {
+    id: 103, 
+    rank: 3,
+    title: "AI-Generated Art Indistinguishable from Human Art, Says Algorithm Creator",
+    source: "Digital Art Weekly"
+  }
+];
+
 export default function Home() {
   const { 
     mediaItems, 
@@ -33,6 +79,142 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-gray-50">
+      {/* Signal of the Week Section */}
+      <div className="bg-white border-b border-gray-200 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Signal of the Week</h2>
+          
+          <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-6">
+            {/* Top signals */}
+            <div className="md:w-2/3 flex flex-col md:flex-row gap-4">
+              {/* First item takes 100% width on mobile, 66% on desktop */}
+              <div 
+                key={signalOfTheWeek[0].id} 
+                className="relative rounded-lg overflow-hidden shadow-md bg-white flex-grow md:w-2/3"
+              >
+                <div className="bg-gray-300 h-72 md:h-96 relative">
+                  {/* Placeholder image or actual image when available */}
+                  {signalOfTheWeek[0].imageUrl && (
+                    <Image
+                      src={signalOfTheWeek[0].imageUrl}
+                      alt={signalOfTheWeek[0].title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 66vw"
+                      className="object-cover"
+                      priority
+                    />
+                  )}
+                  
+                  {/* Badge overlay */}
+                  <div className="absolute top-3 left-3 bg-black bg-opacity-70 text-white px-3 py-1.5 rounded-full text-base font-bold">
+                    No.{signalOfTheWeek[0].rank} 🥇
+                  </div>
+                  
+                  {/* Title overlay */}
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent pt-16 pb-4 px-4">
+                    <h3 className="font-semibold text-xl text-white">
+                      {signalOfTheWeek[0].title}
+                    </h3>
+                    <p className="text-sm text-gray-200 mt-1">
+                      {signalOfTheWeek[0].source}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Container for items 2 and 3 in a flex column */}
+              <div className="flex flex-col md:w-1/3 h-full gap-4">
+                {/* Item 2 */}
+                <div 
+                  key={signalOfTheWeek[1].id} 
+                  className="relative rounded-lg overflow-hidden shadow-md bg-white flex-1"
+                >
+                  <div className="bg-gray-300 h-full relative">
+                    {/* Placeholder image or actual image when available */}
+                    {signalOfTheWeek[1].imageUrl && (
+                      <Image
+                        src={signalOfTheWeek[1].imageUrl}
+                        alt={signalOfTheWeek[1].title}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                        className="object-cover"
+                      />
+                    )}
+                    
+                    {/* Badge overlay */}
+                    <div className="absolute top-2 left-2 bg-black bg-opacity-70 text-white px-2 py-1 rounded-full text-sm font-bold">
+                      No.{signalOfTheWeek[1].rank} 🥈
+                    </div>
+                    
+                    {/* Title overlay */}
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent pt-10 pb-3 px-3">
+                      <h3 className="font-medium text-sm text-white line-clamp-2">
+                        {signalOfTheWeek[1].title}
+                      </h3>
+                      <p className="text-xs text-gray-200">
+                        {signalOfTheWeek[1].source}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Item 3 */}
+                <div 
+                  key={signalOfTheWeek[2].id} 
+                  className="relative rounded-lg overflow-hidden shadow-md bg-white flex-1"
+                >
+                  <div className="bg-gray-300 h-full relative">
+                    {/* Placeholder image or actual image when available */}
+                    {signalOfTheWeek[2].imageUrl && (
+                      <Image
+                        src={signalOfTheWeek[2].imageUrl}
+                        alt={signalOfTheWeek[2].title}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                        className="object-cover"
+                      />
+                    )}
+                    
+                    {/* Badge overlay */}
+                    <div className="absolute top-2 left-2 bg-black bg-opacity-70 text-white px-2 py-1 rounded-full text-sm font-bold">
+                      No.{signalOfTheWeek[2].rank} 🥉
+                    </div>
+                    
+                    {/* Title overlay */}
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent pt-10 pb-3 px-3">
+                      <h3 className="font-medium text-sm text-white line-clamp-2">
+                        {signalOfTheWeek[2].title}
+                      </h3>
+                      <p className="text-xs text-gray-200">
+                        {signalOfTheWeek[2].source}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Noise of the week */}
+            <div className="md:w-1/3 bg-gray-100 rounded-lg p-4">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">Noise of the Week</h3>
+              <div className="space-y-3">
+                {noiseOfTheWeek.map((noise) => (
+                  <div key={noise.id} className="bg-white p-3 rounded-md shadow-sm">
+                    <div className="flex items-start space-x-2">
+                      <span className="text-red-500 font-bold">#{noise.rank}</span>
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">{noise.title}</p>
+                        <p className="text-xs text-gray-500">{noise.source}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
       {/* Main content */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="space-y-4">
