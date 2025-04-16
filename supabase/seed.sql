@@ -4,6 +4,7 @@
 --   - auth.users: Creates test user for development
 --   - media_items: Seeds initial media content
 --   - comments: Seeds initial user comments
+--   - public.highlights: Seeds initial highlights
 -- Security: 
 --   - Creates test user for development purposes only
 --   - Respects RLS policies (read-only media_items, owner-based comments)
@@ -150,4 +151,23 @@ values
     'Best explanations of neural networks I''ve found.', 
     now() - interval '6 hours', 
     'd7bed83c-44a0-4a4f-8456-123412341234'
-  ); 
+  );
+
+-- Seed data for the public.highlights table
+
+-- Clear existing data (optional, uncomment if needed)
+-- delete from public.highlights;
+
+-- Seed Signal of the Week
+insert into public.highlights (type, rank, title, source, cover_image_url, target_url)
+values
+  ('signal', 1, 'Meta''''s vanilla Maverick AI model ranks below rivals on a popular chat benchmark', 'TechCrunch', '/number1.webp', 'https://techcrunch.com/2025/04/11/metas-vanilla-maverick-ai-model-ranks-below-rivals-on-a-popular-chat-benchmark/'),
+  ('signal', 2, '心识宇宙的Second Me Github获得10k+ Star', 'Tech AI Review', '/number2.webp', 'https://youtube.com'),
+  ('signal', 3, 'Explainable AI Framework for Healthcare Applications', 'Medical AI Society', '/number3.webp', 'https://youtube.com');
+
+-- Seed Noise of the Week
+insert into public.highlights (type, rank, title, source, target_url)
+values
+  ('noise', 1, 'AI Will Replace All Writers by Next Month, Claims Startup CEO', 'Tech Hype Daily', 'https://youtube.com'),
+  ('noise', 2, '高能预警，谷歌神器一句话P图全网震动！PS直接淘汰，模特广告业不存在了？', '新智元', 'https://youtube.com'),
+  ('noise', 3, 'AI-Generated Art Indistinguishable from Human Art, Says Algorithm Creator', 'Digital Art Weekly', 'https://youtube.com'); 

@@ -1,11 +1,9 @@
 import './globals.css'
 import type { Metadata } from 'next'
 import { SWRConfig } from 'swr'
-import { createClient } from '@/lib/supabase/server'
-import SignOutButton from '@/components/SignOutButton'
 import { SignInModalProvider } from '@/components/SignInModalProvider'
-import SignInButton from '@/components/SignInButton'
 import Image from 'next/image'
+import HeaderAuthControls from '@/components/HeaderAuthControls'
 
 export const metadata: Metadata = {
   title: 'MediaHunt - AI Media Discovery',
@@ -17,9 +15,6 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-
   return (
     <html lang="en">
       <body>
@@ -37,14 +32,7 @@ export default async function RootLayout({
                     <h1 className="text-3xl font-bold font-serif text-gray-900">MediaHunt</h1>
                   </div>
                 </div>
-                {user ? (
-                  <div className="flex items-center gap-4">
-                    <span className="text-sm text-gray-500">{user.email}</span>
-                    <SignOutButton />
-                  </div>
-                ) : (
-                  <SignInButton />
-                )}
+                <HeaderAuthControls />
               </div>
             </header>
             
